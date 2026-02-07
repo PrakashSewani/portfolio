@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Provider } from "@/components/ui/provider";
-import { Nunito_Sans } from 'next/font/google'
-import { LayoutProvider } from "./context";
+import { Nunito_Sans } from 'next/font/google';
+import { Provider } from "@/components/chakra-ui/provider";
 
 export const metadata: Metadata = {
   title: "Prakash Sewani",
@@ -23,9 +22,7 @@ export default function RootLayout({
     <html suppressHydrationWarning>
       <body className={`${nunito.className}`}>
         <Provider>
-          <LayoutProvider>
-            {children}
-          </LayoutProvider>
+          {children}
         </Provider>
       </body>
     </html>

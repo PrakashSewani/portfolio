@@ -1,66 +1,45 @@
 "use client";
-import { Box, Button, Flex, Stack, Text } from "@chakra-ui/react";
+import { Stack, Box, VStack } from "@chakra-ui/react";
 import { ReactNode } from "react";
-import { LayoutProvider, useLayout } from "../context";
+import StaggeredMenu from "@/components/react-bits/staggered-menu/StaggeredMenu";
+import logo from "./logo.svg"
 
 export default function RootLayout({
     children,
 }: {
     children: ReactNode;
 }) {
-    const { currentPage, handleNavigate } = useLayout();
+    const menuItems = [
+        { label: 'Home', ariaLabel: 'Go to home page', link: '/home' },
+        { label: 'Projects', ariaLabel: 'Learn about projects', link: '/home/projects' },
+        { label: 'Hobbies', ariaLabel: 'View my hobbies', link: '/home/hobbies' },
+        { label: 'Contact', ariaLabel: 'Get in touch', link: '/home/contact' }
+    ];
 
-    const navItems = [
-        { label: "Home", id: "home" },
-        { label: "Projects", id: "projects" },
-        { label: "About", id: "about" },
-        { label: "Contact", id: "contact" },
+    const socialItems = [
+        { label: 'Twitter', link: 'https://twitter.com' },
+        { label: 'GitHub', link: 'https://github.com' },
+        { label: 'LinkedIn', link: 'https://linkedin.com' }
     ];
 
     return (
-        <Stack w={"dvw"} h={"dvh"}>
-            <Flex
-                as="nav"
-                p={4}
-                justifyContent={"space-between"}
-                alignItems={"center"}
-                borderBottomWidth="1px"
-                borderColor="gray.200"
-            >
-                <Box>
-                    <Text
-                        colorPalette={"purple"}
-                        textStyle={"2xl"}
-                        fontWeight="bold"
-                    >
-                        Prakash Sewani
-                    </Text>
-                </Box>
-                <Flex gap={2}>
-                    {navItems.map((item) => (
-                        <Button
-                            key={item.id}
-                            disabled={currentPage === item.id}
-                            colorPalette={"purple"}
-                            rounded={"md"}
-                            variant={currentPage === item.id ? "solid" : "ghost"}
-                            onClick={() => handleNavigate(item.id)}
-                            _hover={{
-                                bg: currentPage === item.id ? undefined : "purple.50",
-                                transition: "all 0.2s",
-                            }}
-                            _disabled={{
-                                opacity: 1,
-                            }}
-                        >
-                            {item.label}
-                        </Button>
-                    ))}
-                </Flex>
-            </Flex>
-            <Box flex={1} p={4} overflowY="auto">
+        <Box overflow={"auto"}>
+            <StaggeredMenu
+                position="right"
+                items={menuItems}
+                socialItems={socialItems}
+                displaySocials
+                displayItemNumbering={true}
+                menuButtonColor="#ffffff"
+                openMenuButtonColor="black"
+                changeMenuColorOnOpen={true}
+                colors={['#B19EEF', 'purple']}
+                logoUrl={logo.src}
+                accentColor="purple"
+            />
+            <Stack flex={1} overflowY="auto" p={4}>
                 {children}
-            </Box>
-        </Stack>
+            </Stack>
+        </Box>
     );
 };
