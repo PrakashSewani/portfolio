@@ -5,6 +5,10 @@
       "name": "app"
     },
     {
+      "path": "components",
+      "name": "components"
+    },
+    {
       "path": ".",
       "name": "project root"
     },
