@@ -1,0 +1,52 @@
+{
+  "folders": [
+    {
+      "path": "app",
+      "name": "app"
+    },
+    {
+      "path": ".",
+      "name": "project root"
+    },
+  ],
+  "settings": {
+    "editor.formatOnSave": true,
+    "files.autoSave": "onFocusChange",
+    "files.exclude": {
+      "**/node_modules": true,
+      "**/.next": true,
+      "**/.vscode": true
+    }
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Start Dev Server",
+        "type": "shell",
+        "command": "npm",
+        "args": [
+          "run",
+          "dev"
+        ],
+        "runOptions": {
+          "runOn": "folderOpen"
+        },
+        "isBackground": true,
+        "problemMatcher": {
+          "pattern": {
+            "regexp": "^.*$",
+            "file": 1,
+            "location": 2,
+            "message": 3
+          },
+          "background": {
+            "activeOnStart": true,
+            "beginsPattern": "^.*",
+            "endsPattern": "- Local:.*"
+          }
+        }
+      }
+    ]
+  }
+}
