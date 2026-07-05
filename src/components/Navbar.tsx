@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, useScroll, useSpring } from 'motion/react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Command } from 'lucide-react';
+import { isMacOs } from 'react-device-detect';
 
 const navLinks = [
   { name: 'expertise', href: '#expertise' },
@@ -11,7 +12,7 @@ const navLinks = [
   { name: 'contact', href: '#contact' },
 ];
 
-export default function Navbar() {
+export default function Navbar({ onOpenCmd }: { onOpenCmd?: () => void }) {
   const [activeSection, setActiveSection] = useState('');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { scrollYProgress } = useScroll();
@@ -69,9 +70,6 @@ export default function Navbar() {
     >
       <div className="flex items-center justify-between px-4 md:px-6 py-4 relative z-[70]">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-accent flex items-center justify-center text-base font-mono text-xs font-bold">
-            PS
-          </div>
           <span className="font-mono text-xs tracking-tighter uppercase font-bold text-ink-dim hidden sm:inline">
             prakash_sewani / 2026
           </span>
@@ -83,11 +81,10 @@ export default function Navbar() {
             <a
               key={link.name}
               href={link.href}
-              className={`text-[11px] uppercase tracking-widest font-bold transition-all relative group font-mono ${
-                activeSection === link.href.slice(1)
-                  ? 'text-accent'
-                  : 'text-ink-dim hover:text-ink'
-              }`}
+              className={`text-[11px] uppercase tracking-widest font-bold transition-all relative group font-mono ${activeSection === link.href.slice(1)
+                ? 'text-accent'
+                : 'text-ink-dim hover:text-ink'
+                }`}
             >
               {link.name}
               {activeSection === link.href.slice(1) && (
@@ -108,6 +105,24 @@ export default function Navbar() {
               ready_for_hire
             </span>
           </div>
+
+          {/* Command Palette Trigger (desktop) */}
+          <button
+            onClick={onOpenCmd}
+            className="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-surface border border-border text-ink-dim hover:text-ink hover:border-border-hover transition-all font-mono text-[10px] uppercase tracking-widest"
+            aria-label="Open command palette"
+          >
+            <span>{isMacOs ? '⌘ K' : 'Ctrl K'}</span>
+          </button>
+
+          {/* Mobile: Command + Menu */}
+          <button
+            onClick={onOpenCmd}
+            className="md:hidden w-11 h-11 flex items-center justify-center bg-surface border border-border text-ink-dim hover:text-ink transition-all duration-300"
+            aria-label="Open command palette"
+          >
+            <Command size={18} />
+          </button>
 
           {/* Mobile Menu Button */}
           <button
@@ -138,11 +153,10 @@ export default function Navbar() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 + 0.1 }}
-                className={`text-4xl uppercase tracking-tighter font-mono transition-all ${
-                  activeSection === link.href.slice(1)
-                    ? 'text-accent'
-                    : 'text-ink-subtle hover:text-ink'
-                }`}
+                className={`text-4xl uppercase tracking-tighter font-mono transition-all ${activeSection === link.href.slice(1)
+                  ? 'text-accent'
+                  : 'text-ink-subtle hover:text-ink'
+                  }`}
               >
                 {link.name}
               </motion.a>

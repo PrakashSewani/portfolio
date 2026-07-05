@@ -29,6 +29,7 @@ export default function Certifications() {
           <h2 className="watermark text-[12vw] md:text-[15vw] absolute -top-8 md:-top-12 left-0">
             VERIFIED
           </h2>
+          <span className="section-number">04</span>
           <div className="flex flex-col gap-4 relative z-10">
             <DecryptionText
               text="Certifications"

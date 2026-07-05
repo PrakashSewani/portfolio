@@ -73,6 +73,7 @@ export default function Experience() {
           <h2 className="watermark text-[12vw] md:text-[15vw] absolute -top-8 md:-top-12 left-0">
             STORY
           </h2>
+          <span className="section-number">03</span>
           <div className="flex flex-col gap-4 relative z-10">
             <DecryptionText
               text="Experience"
