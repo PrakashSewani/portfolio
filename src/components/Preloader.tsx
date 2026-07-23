@@ -9,44 +9,53 @@ interface BootLine {
 
 const bootLines: BootLine[] = [
   { text: 'kernel: v6.8.0-psx-portfolio-amd64', delay: 0 },
-  { text: 'init: loading system modules...', delay: 150 },
-  { text: 'mod: microfrontend_arch loaded', delay: 300, type: 'success' },
-  { text: 'mod: dotnet_core loaded', delay: 450, type: 'success' },
-  { text: 'mod: node_runtime loaded', delay: 550, type: 'success' },
-  { text: 'mod: python_env loaded', delay: 650, type: 'success' },
-  { text: 'mod: graph_ql loaded', delay: 750, type: 'success' },
-  { text: 'net: resolving dependencies...', delay: 900 },
-  { text: 'dep: react@19.0.0 resolved', delay: 1050, type: 'success' },
-  { text: 'dep: motion@12.23.24 resolved', delay: 1150, type: 'success' },
-  { text: 'dep: vite@6.2.0 resolved', delay: 1250, type: 'success' },
-  { text: 'fs: mounting portfolio assets...', delay: 1400 },
-  { text: 'ui: initializing renderer...', delay: 1600 },
-  { text: 'boot: system ready', delay: 1900, type: 'success' },
-  { text: 'user: prakash_sewani authenticated', delay: 2100, type: 'success' },
+  { text: 'init: loading system modules...', delay: 80 },
+  { text: 'mod: microfrontend_arch loaded', delay: 160, type: 'success' },
+  { text: 'mod: dotnet_core loaded', delay: 240, type: 'success' },
+  { text: 'mod: node_runtime loaded', delay: 320, type: 'success' },
+  { text: 'mod: python_env loaded', delay: 400, type: 'success' },
+  { text: 'mod: graph_ql loaded', delay: 480, type: 'success' },
+  { text: 'net: resolving dependencies...', delay: 580 },
+  { text: 'dep: react@19.0.0 resolved', delay: 680, type: 'success' },
+  { text: 'dep: motion@12.23.24 resolved', delay: 760, type: 'success' },
+  { text: 'dep: vite@6.2.0 resolved', delay: 840, type: 'success' },
+  { text: 'fs: mounting portfolio assets...', delay: 940 },
+  { text: 'ui: initializing renderer...', delay: 1080 },
+  { text: 'boot: system ready', delay: 1220, type: 'success' },
+  { text: 'user: prakash_sewani authenticated', delay: 1320, type: 'success' },
 ];
 
 export default function Preloader({ onComplete }: { onComplete: () => void }) {
   const [visibleLines, setVisibleLines] = useState<number>(0);
   const [progress, setProgress] = useState(0);
-  const timersRef = useRef<NodeJS.Timeout[]>([]);
+  const [isExiting, setIsExiting] = useState(false);
+  const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const skipRef = useRef(false);
 
   const finish = useCallback(() => {
     if (skipRef.current) return;
     skipRef.current = true;
     timersRef.current.forEach((timer) => clearTimeout(timer));
-    onComplete();
+    setIsExiting(true);
+    const exitTimer = setTimeout(() => {
+      onComplete();
+    }, 420);
+    timersRef.current.push(exitTimer);
   }, [onComplete]);
 
   useEffect(() => {
-    // Check if user has seen the preloader before
-    const hasSeen = localStorage.getItem('psx_preloader_seen');
-    if (hasSeen) {
-      finish();
-      return;
-    }
+    const timers: ReturnType<typeof setTimeout>[] = [];
 
-    const timers: NodeJS.Timeout[] = [];
+    // Respect reduced motion: show a static, fast completion
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced) {
+      setVisibleLines(bootLines.length);
+      setProgress(100);
+      const doneTimer = setTimeout(() => finish(), 350);
+      timers.push(doneTimer);
+      timersRef.current = timers;
+      return () => timers.forEach((timer) => clearTimeout(timer));
+    }
 
     bootLines.forEach((line, index) => {
       const timer = setTimeout(() => {
@@ -60,22 +69,20 @@ export default function Preloader({ onComplete }: { onComplete: () => void }) {
         if (prev >= 100) {
           clearInterval(progressInterval);
           const doneTimer = setTimeout(() => {
-            localStorage.setItem('psx_preloader_seen', 'true');
             finish();
-          }, 400);
+          }, 180);
           timers.push(doneTimer);
           return 100;
         }
         return prev + 2;
       });
-    }, 40);
+    }, 26);
 
     timersRef.current = timers;
 
     // Escape key to skip
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        localStorage.setItem('psx_preloader_seen', 'true');
         finish();
       }
     };
@@ -107,13 +114,10 @@ export default function Preloader({ onComplete }: { onComplete: () => void }) {
 
   return (
     <motion.div
-      exit={{ y: '-100%' }}
-      transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
-      className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-base overflow-hidden font-mono cursor-pointer"
-      onClick={() => {
-        localStorage.setItem('psx_preloader_seen', 'true');
-        finish();
-      }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.45, ease: [0.76, 0, 0.24, 1] as const }}
+      className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-base overflow-hidden font-mono cursor-pointer crt-preloader ${isExiting ? 'crt-collapse' : ''}`}
+      onClick={() => finish()}
       role="progressbar"
       aria-label="Loading portfolio"
       aria-valuenow={progress}
@@ -146,7 +150,7 @@ export default function Preloader({ onComplete }: { onComplete: () => void }) {
       </div>
 
       <div className="absolute bottom-8 right-8 text-[10px] uppercase tracking-widest font-bold text-ink-subtle animate-pulse" aria-hidden="true">
-        click or esc to skip
+        [esc] skip boot
       </div>
     </motion.div>
   );

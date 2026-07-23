@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { isMacOs } from 'react-device-detect';
+import { type WorkspaceId } from '../App';
 
 function LiveClock() {
   const [time, setTime] = useState('');
@@ -25,16 +26,32 @@ function LiveClock() {
   return <>{time} IST</>;
 }
 
-export default function StatusBar() {
+interface StatusBarProps {
+  activeWorkspace: WorkspaceId;
+}
+
+export default function StatusBar({ activeWorkspace }: StatusBarProps) {
+  const workspaceLabels: Record<WorkspaceId, string> = {
+    home: 'system_status',
+    expertise: 'expertise.d',
+    projects: 'projects.d',
+    journey: 'journey.log',
+    certifications: 'certs.d',
+    interests: 'interests.d',
+    contact: 'contact.sh',
+  };
+
   return (
     <div className="status-bar" role="contentinfo" aria-label="System status bar">
-      <div className="flex items-center gap-3">
-        <div className="flex items-center gap-2">
+      <div className="flex items-center gap-3 min-w-0">
+        <div className="flex items-center gap-2 shrink-0">
           <div className="w-2 h-2 bg-success animate-pulse" />
-          <span className="text-ink-dim">ready for hire</span>
+          <span className="text-ink-dim">ready</span>
         </div>
-        <span className="hidden sm:inline text-ink-subtle">│</span>
-        <span className="hidden sm:inline text-ink-dim">Senior SW Engineer @ Wonderbiz</span>
+        <span className="hidden sm:inline text-ink-subtle shrink-0">│</span>
+        <span className="hidden sm:inline text-accent font-mono uppercase tracking-wider text-[10px] truncate">
+          {workspaceLabels[activeWorkspace]}
+        </span>
       </div>
 
       <div className="hidden md:flex items-center gap-4">
@@ -43,7 +60,7 @@ export default function StatusBar() {
         <span className="text-accent"><LiveClock /></span>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 shrink-0">
         <span className="hidden sm:inline text-ink-subtle">
           {isMacOs ? (
             <>

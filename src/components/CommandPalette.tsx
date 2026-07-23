@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { WORKSPACES, type WorkspaceId } from '../App';
 
 interface Command {
   id: string;
@@ -12,57 +13,62 @@ interface Command {
 interface CommandPaletteProps {
   isOpen: boolean;
   onClose: () => void;
+  activeWorkspace: WorkspaceId;
+  onWorkspaceChange?: (id: WorkspaceId) => void;
 }
 
-export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
+const toast = (message: string) => {
+  const existing = document.querySelector('.toast');
+  if (existing) existing.remove();
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = message;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 2500);
+};
+
+const getUptimeDays = () => {
+  const start = new Date('2022-07-01');
+  const now = new Date();
+  return Math.floor((now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+};
+
+export default function CommandPalette({ isOpen, onClose, onWorkspaceChange }: CommandPaletteProps) {
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
+  const listboxId = 'cmd-results-list';
 
-  const commands: Command[] = [
-    { id: 'expertise', label: 'expertise', hint: 'jump to', action: () => scrollTo('expertise'), section: 'navigate' },
-    { id: 'projects', label: 'projects', hint: 'jump to', action: () => scrollTo('projects'), section: 'navigate' },
-    { id: 'journey', label: 'journey', hint: 'jump to', action: () => scrollTo('journey'), section: 'navigate' },
-    { id: 'certifications', label: 'certifications', hint: 'jump to', action: () => scrollTo('certifications'), section: 'navigate' },
-    { id: 'interests', label: 'interests', hint: 'jump to', action: () => scrollTo('interests'), section: 'navigate' },
-    { id: 'contact', label: 'contact', hint: 'jump to', action: () => scrollTo('contact'), section: 'navigate' },
-    { id: 'github', label: 'open_github', hint: 'external', action: () => window.open('https://github.com/PrakashSewani', '_blank'), section: 'links' },
-    { id: 'linkedin', label: 'linkedin', hint: 'external', action: () => window.open('https://www.linkedin.com/in/prakash-s-2a389721a/', '_blank'), section: 'links' },
-    { id: 'resume', label: 'view_resume', hint: 'external', action: () => window.open('https://prakashsewaniresume.tiiny.site', '_blank'), section: 'links' },
-    { id: 'email', label: 'copy_email', hint: 'clipboard', action: () => copyToClipboard('contact@prakashsewani.com'), section: 'actions' },
-    { id: 'phone', label: 'copy_phone', hint: 'clipboard', action: () => copyToClipboard('+918850260072'), section: 'actions' },
-    { id: 'top', label: 'scroll_to_top', hint: 'navigate', action: () => window.scrollTo({ top: 0, behavior: 'smooth' }), section: 'navigate' },
-  ];
+  const commands: Command[] = useMemo(() => {
+    const nav = WORKSPACES.map((ws) => ({
+      id: ws.id,
+      label: ws.label,
+      hint: 'workspace',
+      action: () => {
+        onWorkspaceChange?.(ws.id);
+        document.getElementById(ws.id)?.scrollIntoView({ behavior: 'smooth' });
+        onClose();
+      },
+      section: 'workspaces',
+    }));
+
+    return [
+      ...nav,
+      { id: 'whoami', label: 'whoami', hint: 'identity', action: () => { document.getElementById('home')?.scrollIntoView({ behavior: 'smooth' }); onClose(); toast('prakash_sewani // senior_software_engineer'); }, section: 'shell' },
+      { id: 'uptime', label: 'uptime', hint: 'career days', action: () => { toast(`uptime: ${getUptimeDays()} days`); onClose(); }, section: 'shell' },
+      { id: 'clear', label: 'clear', hint: 'scroll top', action: () => { window.scrollTo({ top: 0, behavior: 'smooth' }); onClose(); }, section: 'shell' },
+      { id: 'github', label: 'open_github', hint: 'external', action: () => window.open('https://github.com/PrakashSewani', '_blank'), section: 'links' },
+      { id: 'linkedin', label: 'linkedin', hint: 'external', action: () => window.open('https://www.linkedin.com/in/prakash-s-2a389721a/', '_blank'), section: 'links' },
+      { id: 'resume', label: 'view_resume', hint: 'external', action: () => window.open('https://prakashsewaniresume.tiiny.site', '_blank'), section: 'links' },
+      { id: 'email', label: 'copy_email', hint: 'clipboard', action: async () => { try { await navigator.clipboard.writeText('contact@prakashsewani.com'); toast('copied: contact@prakashsewani.com'); } catch { toast('copy failed'); } onClose(); }, section: 'actions' },
+      { id: 'phone', label: 'copy_phone', hint: 'clipboard', action: async () => { try { await navigator.clipboard.writeText('+918850260072'); toast('copied: +918850260072'); } catch { toast('copy failed'); } onClose(); }, section: 'actions' },
+    ];
+  }, [onClose, onWorkspaceChange]);
 
   const filtered = commands.filter((cmd) =>
     cmd.label.toLowerCase().includes(query.toLowerCase())
   );
-
-  const scrollTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-    onClose();
-  };
-
-  const copyToClipboard = async (text: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      showToast(`copied: ${text}`);
-    } catch {
-      showToast('copy failed');
-    }
-    onClose();
-  };
-
-  const showToast = (message: string) => {
-    const existing = document.querySelector('.toast');
-    if (existing) existing.remove();
-    const toast = document.createElement('div');
-    toast.className = 'toast';
-    toast.textContent = message;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 2500);
-  };
 
   useEffect(() => {
     setActiveIndex(0);
@@ -139,7 +145,7 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
             className="cmd-modal"
           >
             <div className="cmd-input-wrapper">
-              <span className="cmd-prompt">&gt;</span>
+              <span className="cmd-prompt">psx&gt;</span>
               <input
                 ref={inputRef}
                 type="text"
@@ -150,10 +156,21 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
                 onKeyDown={handleKeyDown}
                 autoComplete="off"
                 spellCheck={false}
+                role="combobox"
+                aria-autocomplete="list"
+                aria-controls={listboxId}
+                aria-activedescendant={filtered[activeIndex] ? `cmd-item-${filtered[activeIndex].id}` : undefined}
+                aria-expanded={filtered.length > 0}
               />
             </div>
 
-            <div className="cmd-results" ref={resultsRef}>
+            <div
+              id={listboxId}
+              className="cmd-results"
+              ref={resultsRef}
+              role="listbox"
+              aria-label="Command results"
+            >
               {filtered.length === 0 ? (
                 <div className="p-6 text-center text-ink-subtle text-xs uppercase tracking-widest">
                   no results
@@ -162,6 +179,10 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
                 filtered.map((cmd, i) => (
                   <div
                     key={cmd.id}
+                    id={`cmd-item-${cmd.id}`}
+                    role="option"
+                    aria-selected={i === activeIndex}
+                    tabIndex={-1}
                     className={`cmd-result ${i === activeIndex ? 'cmd-result-active' : ''}`}
                     onClick={() => cmd.action()}
                     onMouseEnter={() => setActiveIndex(i)}

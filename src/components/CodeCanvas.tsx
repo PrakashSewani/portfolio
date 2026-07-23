@@ -32,8 +32,9 @@ export default function CodeCanvas() {
     resize();
     window.addEventListener('resize', resize);
 
-    // Initialize tokens
-    const tokenCount = Math.floor((window.innerWidth * window.innerHeight) / 12000);
+    // Initialize tokens, capped for mid-range devices
+    const rawCount = Math.floor((window.innerWidth * window.innerHeight) / 12000);
+    const tokenCount = Math.min(rawCount, 100);
     tokensRef.current = Array.from({ length: tokenCount }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
@@ -115,8 +116,10 @@ export default function CodeCanvas() {
         ctx.fillStyle = `rgba(0, 240, 255, ${t.opacity})`;
         ctx.fillText(t.char, t.x, t.y);
 
-        // Draw connections (limit to nearby tokens)
-        for (let j = i + 1; j < tokens.length; j++) {
+        // Draw connections, capped per token to avoid O(n²) cost
+        let connections = 0;
+        const maxConnections = 3;
+        for (let j = i + 1; j < tokens.length && connections < maxConnections; j++) {
           const t2 = tokens[j];
           const cdx = t.x - t2.x;
           const cdy = t.y - t2.y;
@@ -129,6 +132,7 @@ export default function CodeCanvas() {
             ctx.strokeStyle = `rgba(0, 240, 255, ${alpha})`;
             ctx.lineWidth = 0.5;
             ctx.stroke();
+            connections++;
           }
         }
       }

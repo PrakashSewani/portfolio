@@ -1,26 +1,17 @@
 import { useState, useEffect } from 'react';
-import { motion, useScroll, useSpring } from 'motion/react';
-import { Menu, X, Command } from 'lucide-react';
+import { motion } from 'motion/react';
+import { Menu, X, Command, Terminal } from 'lucide-react';
 import { isMacOs } from 'react-device-detect';
+import { WORKSPACES, type WorkspaceId } from '../App';
 
-const navLinks = [
-  { name: 'expertise', href: '#expertise' },
-  { name: 'projects', href: '#projects' },
-  { name: 'journey', href: '#journey' },
-  { name: 'certs', href: '#certifications' },
-  { name: 'interests', href: '#interests' },
-  { name: 'contact', href: '#contact' },
-];
+interface NavbarProps {
+  onOpenCmd?: () => void;
+  activeWorkspace: WorkspaceId;
+  onWorkspaceChange?: (id: WorkspaceId) => void;
+}
 
-export default function Navbar({ onOpenCmd }: { onOpenCmd?: () => void }) {
-  const [activeSection, setActiveSection] = useState('');
+export default function Navbar({ onOpenCmd, activeWorkspace, onWorkspaceChange }: NavbarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001,
-  });
 
   useEffect(() => {
     if (isMenuOpen) {
@@ -33,72 +24,64 @@ export default function Navbar({ onOpenCmd }: { onOpenCmd?: () => void }) {
     };
   }, [isMenuOpen]);
 
-  useEffect(() => {
-    const observerOptions = {
-      root: null,
-      rootMargin: '-20% 0px -70% 0px',
-      threshold: 0,
-    };
-
-    const observerCallback = (entries: IntersectionObserverEntry[]) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          setActiveSection(entry.target.id);
-        }
-      });
-    };
-
-    const observer = new IntersectionObserver(observerCallback, observerOptions);
-
-    navLinks.forEach((link) => {
-      const element = document.querySelector(link.href);
-      if (element) observer.observe(element);
-    });
-
-    return () => observer.disconnect();
-  }, []);
-
   const handleLinkClick = () => {
     setIsMenuOpen(false);
   };
 
   return (
-    <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      className="fixed top-0 left-0 right-0 z-50 flex flex-col transition-all duration-300 bg-base/90 backdrop-blur-md border-b border-border"
-    >
-      <div className="flex items-center justify-between px-4 md:px-6 py-4 relative z-[70]">
-        <div className="flex items-center gap-3">
-          <span className="font-mono text-xs tracking-tighter uppercase font-bold text-ink-dim hidden sm:inline">
-            prakash_sewani / 2026
+    <div className="flex flex-col bg-base/95 border-b border-border backdrop-blur-md">
+      <div className="flex items-center justify-between px-4 md:px-6 h-14 relative z-[70]">
+        {/* Logo / PSX */}
+        <div className="flex items-center gap-3 min-w-0">
+          <a
+            href="#home"
+            onClick={(e) => {
+              e.preventDefault();
+              onWorkspaceChange?.('home');
+            }}
+            className="flex items-center gap-2 text-ink hover:text-accent transition-colors"
+            aria-label="Home workspace"
+          >
+            <Terminal size={16} className="text-accent" />
+            <span className="font-mono text-xs tracking-tighter uppercase font-bold text-ink hidden sm:inline">
+              psx
+            </span>
+          </a>
+          <span className="hidden sm:block h-4 w-px bg-border" />
+          <span className="font-mono text-[10px] tracking-widest uppercase font-bold text-ink-dim hidden md:inline truncate">
+            prakash_sewani
           </span>
         </div>
 
-        {/* Desktop Links */}
-        <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
+        {/* Desktop Workspaces */}
+        <div className="hidden md:flex items-center gap-1">
+          {WORKSPACES.map((ws) => (
             <a
-              key={link.name}
-              href={link.href}
-              className={`text-[11px] uppercase tracking-widest font-bold transition-all relative group font-mono ${activeSection === link.href.slice(1)
-                ? 'text-accent'
-                : 'text-ink-dim hover:text-ink'
-                }`}
+              key={ws.id}
+              href={ws.href}
+              onClick={(e) => {
+                e.preventDefault();
+                onWorkspaceChange?.(ws.id);
+              }}
+              className={`relative px-3 py-1.5 text-[10px] uppercase tracking-widest font-bold transition-colors font-mono rounded-sm ${
+                activeWorkspace === ws.id
+                  ? 'text-accent bg-accent-dim'
+                  : 'text-ink-dim hover:text-ink hover:bg-surface-hover'
+              }`}
             >
-              {link.name}
-              {activeSection === link.href.slice(1) && (
+              {ws.label}
+              {activeWorkspace === ws.id && (
                 <motion.div
-                  layoutId="activeNav"
-                  className="absolute -bottom-1 left-0 right-0 h-[2px] bg-accent"
-                  transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                  layoutId="activeWorkspace"
+                  className="absolute inset-0 border border-accent/40 rounded-sm"
+                  transition={{ type: 'spring', stiffness: 400, damping: 28 }}
                 />
               )}
             </a>
           ))}
         </div>
 
-        <div className="flex items-center gap-2 md:gap-6">
+        <div className="flex items-center gap-2 md:gap-4">
           <div className="hidden sm:flex items-center gap-2">
             <div className="w-2 h-2 bg-success animate-pulse" />
             <span className="text-[10px] font-mono uppercase text-ink-dim tracking-widest">
@@ -106,28 +89,21 @@ export default function Navbar({ onOpenCmd }: { onOpenCmd?: () => void }) {
             </span>
           </div>
 
-          {/* Command Palette Trigger (desktop) */}
+          {/* Command Palette Trigger */}
           <button
+            id="cmd-trigger"
             onClick={onOpenCmd}
-            className="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-surface border border-border text-ink-dim hover:text-ink hover:border-border-hover transition-all font-mono text-[10px] uppercase tracking-widest"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 bg-surface border border-border text-ink-dim hover:text-ink hover:border-border-hover transition-all font-mono text-[10px] uppercase tracking-widest"
             aria-label="Open command palette"
           >
-            <span>{isMacOs ? '⌘ K' : 'Ctrl K'}</span>
-          </button>
-
-          {/* Mobile: Command + Menu */}
-          <button
-            onClick={onOpenCmd}
-            className="md:hidden w-11 h-11 flex items-center justify-center bg-surface border border-border text-ink-dim hover:text-ink transition-all duration-300"
-            aria-label="Open command palette"
-          >
-            <Command size={18} />
+            <Command size={14} />
+            <span className="hidden sm:inline">{isMacOs ? '⌘K' : 'Ctrl K'}</span>
           </button>
 
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden w-11 h-11 flex items-center justify-center bg-surface border border-border text-ink-dim hover:text-ink transition-all duration-300 relative z-[60]"
+            className="md:hidden w-10 h-10 flex items-center justify-center bg-surface border border-border text-ink-dim hover:text-ink transition-all"
             aria-label="Toggle menu"
           >
             {isMenuOpen ? <X size={18} /> : <Menu size={18} />}
@@ -138,50 +114,37 @@ export default function Navbar({ onOpenCmd }: { onOpenCmd?: () => void }) {
       {/* Mobile Menu Overlay */}
       {isMenuOpen && (
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-          className="md:hidden flex flex-col pt-8 px-8 flex-1 overflow-y-auto bg-base"
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+          className="md:hidden overflow-hidden border-t border-border bg-base"
         >
-          <div className="flex flex-col gap-8">
-            {navLinks.map((link, index) => (
+          <div className="flex flex-col gap-1 p-4">
+            {WORKSPACES.map((ws, index) => (
               <motion.a
-                key={link.name}
-                href={link.href}
-                onClick={handleLinkClick}
-                initial={{ opacity: 0, x: -20 }}
+                key={ws.id}
+                href={ws.href}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleLinkClick();
+                  onWorkspaceChange?.(ws.id);
+                }}
+                initial={{ opacity: 0, x: -12 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.05 + 0.1 }}
-                className={`text-4xl uppercase tracking-tighter font-mono transition-all ${activeSection === link.href.slice(1)
-                  ? 'text-accent'
-                  : 'text-ink-subtle hover:text-ink'
-                  }`}
+                transition={{ delay: index * 0.04 + 0.05 }}
+                className={`px-3 py-3 text-sm uppercase tracking-widest font-mono transition-colors ${
+                  activeWorkspace === ws.id
+                    ? 'text-accent bg-accent-dim'
+                    : 'text-ink-subtle hover:text-ink hover:bg-surface-hover'
+                }`}
               >
-                {link.name}
+                {ws.label}
               </motion.a>
             ))}
-
-            <div className="mt-12 pt-8 border-t border-border flex flex-col gap-4">
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-2 bg-success animate-pulse" />
-                <span className="text-xs font-mono uppercase text-ink-dim tracking-widest">
-                  ready_for_hire
-                </span>
-              </div>
-              <span className="text-[10px] uppercase tracking-[0.4em] font-bold text-ink-subtle">
-                prakash_sewani / 2026
-              </span>
-            </div>
           </div>
         </motion.div>
       )}
-
-      {/* Scroll Progress Bar */}
-      <motion.div
-        className="h-[2px] bg-accent origin-left"
-        style={{ scaleX }}
-      />
-    </motion.nav>
+    </div>
   );
 }

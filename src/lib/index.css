@@ -9,7 +9,7 @@
   --color-surface-hover: #1a1a1a;
   --color-ink: #e0e0e0;
   --color-ink-dim: #888888;
-  --color-ink-subtle: #666666;
+  --color-ink-subtle: #8c8c8c;
   --color-accent: #00f0ff;
   --color-accent-dim: rgba(0, 240, 255, 0.15);
   --color-border: #222222;
@@ -127,13 +127,6 @@
   box-shadow: 0 0 20px rgba(0, 240, 255, 0.1);
 }
 
-/* Subtle Grid Background */
-.subtle-grid {
-  background-image: linear-gradient(to right, #111111 1px, transparent 1px),
-                    linear-gradient(to bottom, #111111 1px, transparent 1px);
-  background-size: 40px 40px;
-}
-
 /* Watermark Text */
 .watermark {
   font-family: "JetBrains Mono", monospace;
@@ -177,8 +170,71 @@
 }
 
 .boot-line {
-  animation: boot-fade 0.3s ease-out forwards;
+  animation: boot-fade 0.2s ease-out forwards;
   opacity: 0;
+}
+
+/* CRT collapse exit for preloader */
+.crt-preloader {
+  --crt-scan-color: rgba(0, 240, 255, 0.25);
+}
+
+.crt-collapse {
+  animation: crt-collapse 0.4s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+}
+
+@keyframes crt-collapse {
+  0% {
+    clip-path: inset(0 0 0 0);
+    filter: brightness(1);
+  }
+  40% {
+    filter: brightness(1.4) saturate(1.2);
+  }
+  60% {
+    clip-path: inset(45% 0 45% 0);
+    filter: brightness(2) saturate(1.4);
+  }
+  100% {
+    clip-path: inset(50% 0 50% 0);
+    opacity: 0;
+    filter: brightness(3) saturate(2);
+  }
+}
+
+/* Scanline burst during collapse */
+.crt-collapse::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 2px,
+    var(--crt-scan-color) 2px,
+    var(--crt-scan-color) 4px
+  );
+  opacity: 0.6;
+  pointer-events: none;
+  animation: scan-burst 0.4s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+}
+
+@keyframes scan-burst {
+  0% { opacity: 0; }
+  30% { opacity: 0.8; }
+  100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crt-collapse,
+  .crt-collapse::after {
+    animation: none !important;
+  }
+  .crt-collapse {
+    opacity: 0;
+    clip-path: inset(0 0 0 0);
+    transition: opacity 0.05s;
+  }
 }
 
 /* Focus-visible for keyboard navigation */
@@ -477,10 +533,6 @@
   .dashboard-grid {
     grid-template-columns: 1fr;
   }
-  .status-bar {
-    height: 32px;
-    font-size: 9px;
-  }
   .cmd-backdrop {
     padding-top: 0;
     align-items: flex-end;
@@ -530,17 +582,42 @@
   border: 0;
 }
 
-/* Reduced Motion: disable all animations */
+/* Reduced Motion: keep the UI beautiful; crossfade colors/opacity, suppress transforms/parallax */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    transition-property: opacity, color, background-color, border-color, outline-color, box-shadow, text-decoration-color, fill, stroke !important;
+    transition-duration: 0.2s !important;
   }
 
-  .scanline-overlay {
-    display: none;
+  .scanline-overlay,
+  .terminal-cursor {
+    animation: none !important;
+  }
+
+  .skip-link,
+  :focus-visible,
+  .cmd-result,
+  .toast {
+    transition-duration: 0.15s !important;
+  }
+
+  .toast {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+
+  .crt-collapse,
+  .crt-collapse::after {
+    animation: none !important;
+  }
+
+  .crt-collapse {
+    opacity: 0;
+    clip-path: inset(0 0 0 0);
+    transition: opacity 0.05s !important;
   }
 }

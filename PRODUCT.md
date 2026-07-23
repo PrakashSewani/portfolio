@@ -6,44 +6,36 @@ brand
 
 ## Users
 
-- Hiring managers and technical recruiters at mid-to-senior level
-- Fellow engineers evaluating collaboration potential
-- Potential clients assessing technical credibility
-
-Context: They are scanning portfolios quickly, often on large monitors in offices or on laptops in transit. They want to see engineering competence, not generic design.
+Recruiters, engineering managers, and senior peers evaluating whether Prakash Sewani is a systems-level engineer who can own platform architecture. They arrive from LinkedIn, GitHub, or a resume link; they have low time and high skepticism; they want proof in the first ten seconds that the interface itself is architecture.
 
 ## Product Purpose
 
-A personal portfolio that communicates senior software engineering capability through an interface that itself demonstrates technical craft. The portfolio is the proof: if the site is built like a precise terminal instrument, the engineer behind it is credible.
-
-Success = a visitor thinks "this person builds real systems, not landing pages" within 3 seconds.
+A portfolio that demonstrates platform thinking through the interface. Every interaction — boot, navigation, command palette, section transition — behaves like an operating system shell because the work being sold is building live, scalable systems.
 
 ## Brand Personality
 
-- Precise: every pixel has a reason, no decoration without function
-- Native: the interface feels like a tool, not a presentation
-- Ambitious: not afraid of technical complexity, embraces it as identity
+- **Systems.** Structure is visible; nothing is decorative without a function.
+- **Precise.** Type, timing, and motion are tuned, not verbose.
+- **Inhabitable.** The visitor feels inside the environment, not in front of a brochure.
 
-Three words: precise, native, ambitious.
+Three-word shorthand: **systems · precise · inhabitable**
 
 ## Anti-references
 
-- Generic SaaS template (cream bg, blue accents, rounded cards)
-- Editorial magazine aesthetic (serif headings, wide whitespace, passive)
-- Playful/gamified UI (cartoon icons, bouncy animations, candy colors)
-- Overly minimal to the point of empty (no signal, no personality)
+- Generic SaaS cream-and-purple marketing hero sections.
+- "Developer portfolio" card grids with large rounded icons above every heading.
+- Monospace as costume without real shell behavior.
+- Big number / small label SaaS metric rows as the hero.
+- Gradient text, glassmorphism cards, or side-stripe accent borders.
 
 ## Design Principles
 
-1. The interface is the proof: the site itself should feel engineered, not decorated.
-2. Function over flourish: every animation must serve information hierarchy, not entertainment.
-3. Terminal as truth: the aesthetic is a native terminal IDE — not a costume, but a commitment.
-4. Restraint in chaos: the background is alive, but the foreground is readable and controlled.
-5. Dark by default: the environment is a dark terminal room; light is the exception, not the rule.
+1. **Show architecture, not claims.** The site itself must feel engineered before the visitor reads a line of bio.
+2. **Boot is product.** The loader is never skipped; it is the first proof of craft.
+3. **Keyboard is first-class.** Command palette and shortcuts should feel native to the shell.
+4. **Extraordinary must still load.** Effects never block content or tank mid-range devices.
+5. **Reduced motion stays beautiful.** Accessibility is a refinement, not an afterthought.
 
 ## Accessibility & Inclusion
 
-- WCAG 2.1 AA target: body text ≥4.5:1, large text ≥3:1
-- `prefers-reduced-motion`: all decryption/typing animations disabled, canvas paused, static text shown immediately
-- Keyboard navigation: all interactive elements reachable via Tab
-- Color blindness: cyan accent on dark bg is distinguishable; no critical info conveyed by color alone
+WCAG 2.2 AA target. Body text ≥ 4.5:1 against background; large text ≥ 3:1. Reduced-motion preference disables boot animation and replaces motion with crossfades. Keyboard focus visible, command palette keyboard-navigable, skip-link present.
