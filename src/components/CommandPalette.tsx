@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { WORKSPACES, type WorkspaceId } from '../App';
+import { profile } from '../data/portfolio';
 
 interface Command {
   id: string;
@@ -58,11 +59,10 @@ export default function CommandPalette({ isOpen, onClose, onWorkspaceChange }: C
       { id: 'whoami', label: 'whoami', hint: 'identity', action: () => { document.getElementById('home')?.scrollIntoView({ behavior: 'smooth' }); onClose(); toast('prakash_sewani // senior_software_engineer'); }, section: 'shell' },
       { id: 'uptime', label: 'uptime', hint: 'career days', action: () => { toast(`uptime: ${getUptimeDays()} days`); onClose(); }, section: 'shell' },
       { id: 'clear', label: 'clear', hint: 'scroll top', action: () => { window.scrollTo({ top: 0, behavior: 'smooth' }); onClose(); }, section: 'shell' },
-      { id: 'github', label: 'open_github', hint: 'external', action: () => window.open('https://github.com/PrakashSewani', '_blank'), section: 'links' },
-      { id: 'linkedin', label: 'linkedin', hint: 'external', action: () => window.open('https://www.linkedin.com/in/prakash-s-2a389721a/', '_blank'), section: 'links' },
-      { id: 'resume', label: 'view_resume', hint: 'external', action: () => window.open('https://prakashsewaniresume.tiiny.site', '_blank'), section: 'links' },
-      { id: 'email', label: 'copy_email', hint: 'clipboard', action: async () => { try { await navigator.clipboard.writeText('contact@prakashsewani.com'); toast('copied: contact@prakashsewani.com'); } catch { toast('copy failed'); } onClose(); }, section: 'actions' },
-      { id: 'phone', label: 'copy_phone', hint: 'clipboard', action: async () => { try { await navigator.clipboard.writeText('+918850260072'); toast('copied: +918850260072'); } catch { toast('copy failed'); } onClose(); }, section: 'actions' },
+      { id: 'github', label: 'open_github', hint: 'external', action: () => window.open(profile.github, '_blank'), section: 'links' },
+      { id: 'linkedin', label: 'linkedin', hint: 'external', action: () => window.open(profile.linkedin, '_blank'), section: 'links' },
+      { id: 'resume', label: 'view_resume', hint: 'external', action: () => window.open(profile.resume, '_blank'), section: 'links' },
+      { id: 'email', label: 'copy_email', hint: 'clipboard', action: async () => { try { await navigator.clipboard.writeText(profile.email); toast(`copied: ${profile.email}`); } catch { toast('copy failed'); } onClose(); }, section: 'actions' },
     ];
   }, [onClose, onWorkspaceChange]);
 
@@ -145,12 +145,12 @@ export default function CommandPalette({ isOpen, onClose, onWorkspaceChange }: C
             className="cmd-modal"
           >
             <div className="cmd-input-wrapper">
-              <span className="cmd-prompt">psx&gt;</span>
+              <span className="cmd-prompt">PS /</span>
               <input
                 ref={inputRef}
                 type="text"
                 className="cmd-input"
-                placeholder="type a command..."
+                placeholder="Jump to work or open a link..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={handleKeyDown}

@@ -4,23 +4,33 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Prakash Sewani | Senior Software Engineer</title>
-    <meta name="description" content="Prakash Sewani - Senior Software Engineer specializing in Microfrontend Architecture, .NET Core, Node.js, and Python. Explore my technical expertise and professional journey." />
+    <meta name="description" content="Prakash Sewani is a Senior Software Engineer architecting modular frontend platforms, dependable APIs, and real-time systems." />
     <meta name="keywords" content="Prakash Sewani, Software Engineer, Senior Software Engineer, Microfrontends, .NET Core, Node.js, Python, React, Single-Spa, Portfolio" />
     <meta name="author" content="Prakash Sewani" />
+    <meta name="theme-color" content="#f1efe7" />
+    <script>
+      (() => {
+        const savedTheme = localStorage.getItem('portfolio-theme');
+        const theme = savedTheme === 'light' || savedTheme === 'dark'
+          ? savedTheme
+          : window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme;
+        document.querySelector('meta[name="theme-color"]').content = theme === 'dark' ? '#11110f' : '#f1efe7';
+      })();
+    </script>
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://prakashsewani.com/" />
     <meta property="og:title" content="Prakash Sewani | Senior Software Engineer" />
-    <meta property="og:description" content="Senior Software Engineer specializing in Microfrontend Architecture and Scalable Systems." />
-    <meta property="og:image" content="https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1200&h=630&auto=format&fit=crop" />
+    <meta property="og:description" content="Architecture-minded engineering for products and teams growing through complexity." />
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content="https://prakashsewani.com/" />
     <meta property="twitter:title" content="Prakash Sewani | Senior Software Engineer" />
-    <meta property="twitter:description" content="Senior Software Engineer specializing in Microfrontend Architecture and Scalable Systems." />
-    <meta property="twitter:image" content="https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1200&h=630&auto=format&fit=crop" />
+    <meta property="twitter:description" content="Architecture-minded engineering for products and teams growing through complexity." />
 
     <link rel="canonical" href="https://prakashsewani.com/" />
     <link rel="icon" href="/favicon.ico" sizes="any">
@@ -68,4 +78,3 @@
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-

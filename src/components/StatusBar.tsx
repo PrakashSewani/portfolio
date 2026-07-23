@@ -36,7 +36,6 @@ export default function StatusBar({ activeWorkspace }: StatusBarProps) {
     expertise: 'expertise.d',
     projects: 'projects.d',
     journey: 'journey.log',
-    certifications: 'certs.d',
     interests: 'interests.d',
     contact: 'contact.sh',
   };
