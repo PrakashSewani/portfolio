@@ -70,7 +70,14 @@ export default function Navbar({ onOpenCmd, activeWorkspace, onWorkspaceChange, 
         <a className="resume-button" href={profile.resume} target="_blank" rel="noreferrer">
           Résumé <ArrowUpRight size={15} />
         </a>
-        <button className="menu-button" onClick={() => setOpen((value) => !value)} aria-label="Toggle navigation">
+        <button
+          type="button"
+          className="menu-button"
+          onClick={() => setOpen((value) => !value)}
+          aria-label={open ? 'Close navigation' : 'Open navigation'}
+          aria-expanded={open}
+          aria-controls="mobile-navigation"
+        >
           {open ? <X /> : <Menu />}
         </button>
       </div>
@@ -78,6 +85,7 @@ export default function Navbar({ onOpenCmd, activeWorkspace, onWorkspaceChange, 
       <AnimatePresence>
         {open && (
           <motion.nav
+            id="mobile-navigation"
             className="mobile-nav"
             initial={{ clipPath: 'inset(0 0 100% 0)' }}
             animate={{ clipPath: 'inset(0 0 0% 0)' }}
