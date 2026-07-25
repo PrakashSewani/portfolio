@@ -32,6 +32,35 @@ function ProjectVisual({ type }: { type: (typeof projects)[number]['visual'] }) 
     );
   }
 
+  if (type === 'roulette') {
+    return (
+      <div className="mockup roulette-mockup">
+        <div className="mockup-bar"><span>netflix.com/title/80018294</span><span>×</span></div>
+        <div className="roulette-stage">
+          <div className="roulette-series">
+            <small>SERIES / THE OFFICE</small>
+            <strong>RANDOM EPISODE</strong>
+            <span>S5 · E14 · “Stress Relief”</span>
+          </div>
+          <div className="roulette-actions">
+            <button type="button" className="roulette-play">▶ Play</button>
+            <button type="button" className="roulette-dice">🎲 Random Episode</button>
+          </div>
+          <div className="roulette-discover">
+            <small>DISCOVERY</small>
+            <div className="roulette-discover-row"><span>Season 1</span><b>6 ep</b></div>
+            <div className="roulette-discover-row"><span>Season 2</span><b>22 ep</b></div>
+            <div className="roulette-discover-row"><span>Season 3</span><b>23 ep</b></div>
+            <div className="roulette-discover-row"><span>Season 4</span><b>19 ep</b></div>
+            <div className="roulette-discover-row"><span>Season 5</span><b>28 ep</b></div>
+            <div className="roulette-discover-row"><span>Season 6</span><b>26 ep</b></div>
+          </div>
+        </div>
+        <div className="mockup-status"><span>Manifest V3</span><span>TypeScript</span><span>1 / 124 picked</span></div>
+      </div>
+    );
+  }
+
   return (
     <div className="mockup knowledge-mockup">
       <div className="knowledge-sidebar"><strong>SEB</strong><span>01</span><span>02</span><span>03</span></div>
@@ -72,7 +101,7 @@ export default function Projects() {
               <ul>{project.decisions.map((decision) => <li key={decision}>{decision}</li>)}</ul>
               <div className="project-links">
                 <a href={project.github} target="_blank" rel="noreferrer"><Github size={17} /> Source</a>
-                {'live' in project && project.live && <a href={project.live} target="_blank" rel="noreferrer">Install extension <ArrowUpRight size={17} /></a>}
+                {'live' in project && project.live && <a href={project.live} target="_blank" rel="noreferrer">{('liveLabel' in project && project.liveLabel) || 'Live site'} <ArrowUpRight size={17} /></a>}
               </div>
             </div>
             <div className="project-visual"><ProjectVisual type={project.visual} /><div className="tech-ribbon">{project.tech.map((tech) => <span key={tech}>{tech}</span>)}</div></div>

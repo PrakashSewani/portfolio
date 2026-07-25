@@ -23,7 +23,8 @@ export const projects = [
     decisions: ['Framework-aware parsing', 'AST-assisted inspection', 'Low-latency editor feedback'],
     tech: ['TypeScript', 'VS Code API', 'Tailwind CSS', 'AST parsing'],
     github: 'https://github.com/PrakashSewani/Class-Spy',
-    live: 'https://marketplace.visualstudio.com/items?itemName=PrakashSewani.class-spy',
+    live: 'https://class-spy.prakashsewani.com/',
+    liveLabel: 'Visit website',
     visual: 'inspector',
   },
   {
@@ -51,6 +52,21 @@ export const projects = [
     tech: ['Python', 'Flask', 'BERT', 'Transformers', 'BeautifulSoup'],
     github: 'https://github.com/PrakashSewani/SMART-EDUCATION-BOT',
     visual: 'knowledge',
+  },
+  {
+    index: '04',
+    title: 'Episode Roulette',
+    kicker: 'Browser extension / Netflix UX',
+    summary:
+      'A Chrome and Safari WebExtension that injects a Random Episode button into Netflix series pages, discovering every episode across all seasons and picking one with equal probability.',
+    challenge:
+      'Discover every episode across all seasons on a SPA whose DOM is fully controlled by Netflix, without external APIs, then start playback as if the user clicked it themselves.',
+    decisions: ['MutationObserver-driven detection', 'Equal-probability randomizer', 'Native Netflix UI integration'],
+    tech: ['TypeScript', 'Manifest V3', 'Safari Web Extensions', 'Vite', 'MutationObserver'],
+    github: 'https://github.com/PrakashSewani/episode-roulette',
+    live: 'https://episode-roulette.prakashsewani.com/',
+    liveLabel: 'Visit website',
+    visual: 'roulette',
   },
 ] as const;
 
