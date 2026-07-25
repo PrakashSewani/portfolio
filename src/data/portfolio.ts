@@ -29,32 +29,6 @@ export const projects = [
   },
   {
     index: '02',
-    title: 'Habitual',
-    kicker: 'Full-stack product / Habit platform',
-    summary:
-      'A cross-device habit system designed around clear routines, visible momentum, and a focused daily workflow.',
-    challenge:
-      'Model recurring behavior and progress in a way that remains simple for users while supporting a modern full-stack application architecture.',
-    decisions: ['Reusable React UI', 'API-first data flow', 'Progress-focused product model'],
-    tech: ['TypeScript', 'React', 'Node.js', 'MongoDB'],
-    github: 'https://github.com/PrakashSewani/Habitual',
-    visual: 'habit',
-  },
-  {
-    index: '03',
-    title: 'Smart Education Bot',
-    kicker: 'Applied NLP / Knowledge retrieval',
-    summary:
-      'A PDF question-answering system that combines document extraction, contextual NLP responses, and a web fallback path.',
-    challenge:
-      'Find useful answers from unstructured educational material while preserving a fallback when the local source cannot resolve a query.',
-    decisions: ['Document-first retrieval', 'BERT-based context', 'Graceful web fallback'],
-    tech: ['Python', 'Flask', 'BERT', 'Transformers', 'BeautifulSoup'],
-    github: 'https://github.com/PrakashSewani/SMART-EDUCATION-BOT',
-    visual: 'knowledge',
-  },
-  {
-    index: '04',
     title: 'Episode Roulette',
     kicker: 'Browser extension / Netflix UX',
     summary:
@@ -68,6 +42,32 @@ export const projects = [
     liveLabel: 'Visit website',
     visual: 'roulette',
   },
+  {
+    index: '03',
+    title: 'Habitual',
+    kicker: 'Full-stack product / Habit platform',
+    summary:
+      'A cross-device habit system designed around clear routines, visible momentum, and a focused daily workflow.',
+    challenge:
+      'Model recurring behavior and progress in a way that remains simple for users while supporting a modern full-stack application architecture.',
+    decisions: ['Reusable React UI', 'API-first data flow', 'Progress-focused product model'],
+    tech: ['TypeScript', 'React', 'Node.js', 'MongoDB'],
+    github: 'https://github.com/PrakashSewani/Habitual',
+    visual: 'habit',
+  },
+  {
+    index: '04',
+    title: 'Smart Education Bot',
+    kicker: 'Applied NLP / Knowledge retrieval',
+    summary:
+      'A PDF question-answering system that combines document extraction, contextual NLP responses, and a web fallback path.',
+    challenge:
+      'Find useful answers from unstructured educational material while preserving a fallback when the local source cannot resolve a query.',
+    decisions: ['Document-first retrieval', 'BERT-based context', 'Graceful web fallback'],
+    tech: ['Python', 'Flask', 'BERT', 'Transformers', 'BeautifulSoup'],
+    github: 'https://github.com/PrakashSewani/SMART-EDUCATION-BOT',
+    visual: 'knowledge',
+  }
 ] as const;
 
 export const capabilities = [

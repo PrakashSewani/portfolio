@@ -19,13 +19,9 @@ export const WORKSPACES = [
 ] as const;
 
 export type WorkspaceId = (typeof WORKSPACES)[number]['id'];
-export type Theme = 'light' | 'dark';
 
 export default function App() {
   const [cmdOpen, setCmdOpen] = useState(false);
-  const [theme, setTheme] = useState<Theme>(() =>
-    document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'
-  );
   const [activeWorkspace, setActiveWorkspace] = useState<WorkspaceId>('home');
   const activeWorkspaceRef = useRef<WorkspaceId>(activeWorkspace);
   const { scrollYProgress } = useScroll();
@@ -34,13 +30,6 @@ export default function App() {
   useEffect(() => {
     activeWorkspaceRef.current = activeWorkspace;
   }, [activeWorkspace]);
-
-  useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-    document.documentElement.style.colorScheme = theme;
-    localStorage.setItem('portfolio-theme', theme);
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#11110f' : '#f1efe7');
-  }, [theme]);
 
   const handleCmdClose = () => {
     setCmdOpen(false);
@@ -56,27 +45,26 @@ export default function App() {
   useEffect(() => {
     const ids = WORKSPACES.map((w) => w.id);
     const updateActive = () => {
-      const viewportCenter = window.scrollY + window.innerHeight * 0.35;
-      let closestId: WorkspaceId = 'home';
-      let minDistance = Infinity;
-      ids.forEach((id) => {
+      const trigger = window.scrollY + window.innerHeight * 0.4;
+      let nextId: WorkspaceId = ids[0];
+      for (const id of ids) {
         const element = document.getElementById(id);
-        if (!element) return;
-        const distance = Math.abs(element.offsetTop - viewportCenter);
-        if (distance < minDistance) {
-          minDistance = distance;
-          closestId = id;
-        }
-      });
-
-      if (closestId !== activeWorkspaceRef.current) {
-        setActiveWorkspace(closestId);
-        activeWorkspaceRef.current = closestId;
+        if (!element) continue;
+        if (element.getBoundingClientRect().top + window.scrollY <= trigger) nextId = id;
+        else break;
+      }
+      if (nextId !== activeWorkspaceRef.current) {
+        setActiveWorkspace(nextId);
+        activeWorkspaceRef.current = nextId;
       }
     };
     updateActive();
     window.addEventListener('scroll', updateActive, { passive: true });
-    return () => window.removeEventListener('scroll', updateActive);
+    window.addEventListener('resize', updateActive);
+    return () => {
+      window.removeEventListener('scroll', updateActive);
+      window.removeEventListener('resize', updateActive);
+    };
   }, []);
 
   const navigate = (id: WorkspaceId) => {
@@ -94,8 +82,6 @@ export default function App() {
         activeWorkspace={activeWorkspace}
         onWorkspaceChange={navigate}
         onOpenCmd={() => setCmdOpen(true)}
-        theme={theme}
-        onToggleTheme={() => setTheme((current) => current === 'light' ? 'dark' : 'light')}
       />
       <main id="main">
         <HeroDashboard />
