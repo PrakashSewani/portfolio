@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import type { KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { ArrowUpRight, Command, Menu, X } from 'lucide-react';
 import { WORKSPACES, type WorkspaceId } from '../data/navigation';
@@ -51,7 +52,7 @@ export default function Navbar({ onOpenCmd, activeWorkspace, onWorkspaceChange }
     onWorkspaceChange(id);
   };
 
-  const handleMenuKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
+  const handleMenuKeyDown = (event: ReactKeyboardEvent<HTMLElement>) => {
     if (event.key !== 'Tab') return;
     const items = menuRef.current?.querySelectorAll<HTMLElement>('button, a');
     if (!items?.length) return;

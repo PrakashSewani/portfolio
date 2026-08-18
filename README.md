@@ -39,29 +39,19 @@ src/
 ├── App.tsx                    # Layout, theme, scroll progress, command palette
 ├── main.tsx                   # Entry point
 ├── components/
-│   ├── Navbar.tsx             # Fixed header with nav + theme toggle
-│   ├── HeroDashboard.tsx      # Hero with architecture graphic
+│   ├── Navbar.tsx             # Fixed header with section navigation
+│   ├── HeroDashboard.tsx      # Hiring-focused hero with architecture proof
 │   ├── Projects.tsx           # Selected work case studies
-│   ├── Expertise.tsx          # Capability grid + impact stories
+│   ├── Expertise.tsx          # Technical strengths + production scope
 │   ├── Experience.tsx         # Career timeline + certifications
-│   ├── Interests.tsx          # About + principles + offscreen
-│   ├── Contact.tsx            # Contact section
-│   ├── CommandPalette.tsx     # Cmd+K navigation
-│   ├── CodeCanvas.tsx         # Animated code display
-│   ├── CodeAssemblyTag.tsx    # Tech tag component
-│   ├── DecryptionText.tsx     # Decryption text effect
-│   ├── EasterEggs.tsx          # Hidden interactions
-│   ├── GlobalBackground.tsx   # Background layer
-│   ├── OsControls.tsx         # Window controls
-│   ├── Preloader.tsx          # Loading state
-│   ├── StatusBar.tsx          # Status bar
-│   └── TerminalCursor.tsx     # Cursor component
+│   ├── Interests.tsx          # Working approach + principles
+│   ├── Contact.tsx            # Hiring contact section
+│   └── CommandPalette.tsx     # Optional Cmd/Ctrl+K navigation
 ├── data/
+│   ├── navigation.ts          # Shared section navigation contract
 │   └── portfolio.ts           # Profile, projects, capabilities, career data
 └── lib/
-    ├── index.css              # All styles (CSS variables, brutalist design)
-    ├── ThemeContext.tsx       # Theme provider
-    └── utils.ts               # Utilities
+    └── index.css              # All styles (CSS variables, brutalist design)
 ```
 
 ## Icons

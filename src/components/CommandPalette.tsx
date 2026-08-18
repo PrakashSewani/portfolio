@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import type { KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { ArrowUpRight, X } from 'lucide-react';
 import { WORKSPACES, type WorkspaceId } from '../data/navigation';
@@ -82,7 +83,7 @@ export default function CommandPalette({ isOpen, onClose, onWorkspaceChange }: C
   }, [isOpen]);
 
   const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
+    (e: ReactKeyboardEvent) => {
       if (e.key === 'ArrowDown') {
         e.preventDefault();
         setActiveIndex((prev) => Math.min(prev + 1, Math.max(filtered.length - 1, 0)));
@@ -116,7 +117,7 @@ export default function CommandPalette({ isOpen, onClose, onWorkspaceChange }: C
     active?.scrollIntoView({ block: 'nearest' });
   }, [activeIndex]);
 
-  const handleModalKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+  const handleModalKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
     if (event.key !== 'Tab') return;
     const items = modalRef.current?.querySelectorAll<HTMLElement>('input, button, [role="option"]');
     if (!items?.length) return;
