@@ -1,11 +1,11 @@
 import { motion } from 'motion/react';
-import { ArrowUpRight, Check, Github } from 'lucide-react';
+import { ArrowUpRight, Github, Check } from 'lucide-react';
 import { projects } from '../data/portfolio';
 
 function ProjectVisual({ type }: { type: (typeof projects)[number]['visual'] }) {
   if (type === 'inspector') {
     return (
-      <div className="mockup inspector-mockup">
+      <div className="mockup inspector-mockup" aria-hidden="true">
         <div className="mockup-bar"><span>class-spy.tsx</span><span>×</span></div>
         <div className="code-row"><b>14</b><code>&lt;div className=<mark>"flex items-center gap-4"</mark>&gt;</code></div>
         <div className="code-row muted"><b>15</b><code>&nbsp;&nbsp;&lt;Tool /&gt;</code></div>
@@ -22,7 +22,7 @@ function ProjectVisual({ type }: { type: (typeof projects)[number]['visual'] }) 
 
   if (type === 'habit') {
     return (
-      <div className="mockup habit-mockup">
+      <div className="mockup habit-mockup" aria-hidden="true">
         <div className="habit-head"><div><small>GOOD MORNING</small><strong>Build momentum.</strong></div><b>87%</b></div>
         <div className="week-row">{['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, index) => <span className={index < 5 ? 'done' : ''} key={`${day}-${index}`}>{day}</span>)}</div>
         <div className="habit-list">
@@ -34,7 +34,7 @@ function ProjectVisual({ type }: { type: (typeof projects)[number]['visual'] }) 
 
   if (type === 'roulette') {
     return (
-      <div className="mockup roulette-mockup">
+      <div className="mockup roulette-mockup" aria-hidden="true">
         <div className="mockup-bar"><span>netflix.com/title/80018294</span><span>×</span></div>
         <div className="roulette-stage">
           <div className="roulette-series">
@@ -43,8 +43,8 @@ function ProjectVisual({ type }: { type: (typeof projects)[number]['visual'] }) 
             <span>S5 · E14 · “Stress Relief”</span>
           </div>
           <div className="roulette-actions">
-            <button type="button" className="roulette-play">▶ Play</button>
-            <button type="button" className="roulette-dice">🎲 Random Episode</button>
+            <span className="roulette-play">▶ Play</span>
+            <span className="roulette-dice">🎲 Random Episode</span>
           </div>
           <div className="roulette-discover">
             <small>DISCOVERY</small>
@@ -62,7 +62,7 @@ function ProjectVisual({ type }: { type: (typeof projects)[number]['visual'] }) 
   }
 
   return (
-    <div className="mockup knowledge-mockup">
+    <div className="mockup knowledge-mockup" aria-hidden="true">
       <div className="knowledge-sidebar"><strong>SEB</strong><span>01</span><span>02</span><span>03</span></div>
       <div className="knowledge-body">
         <small>DOCUMENT / NLP_CHAPTER.PDF</small>
@@ -80,7 +80,7 @@ export default function Projects() {
       <div className="section-heading">
         <span className="section-index">01 / SELECTED WORK</span>
         <h2>PROOF, NOT<br />PROFICIENCY BARS.</h2>
-        <p>Projects framed around the problem, the engineering choices, and the product experience.</p>
+        <p>Selected projects showing what I built, what I owned, and the engineering constraints behind the result.</p>
       </div>
 
       <div className="project-list">
@@ -95,16 +95,25 @@ export default function Projects() {
           >
             <div className="project-meta"><span>{project.index}</span><p>{project.kicker}</p></div>
             <div className="project-copy">
+              <div className="project-context">{project.context}</div>
               <h3>{project.title}</h3>
               <p className="project-summary">{project.summary}</p>
+              <div className={`project-proof-grid ${'evidence' in project && project.evidence ? '' : 'single-proof'}`}>
+                <div><small>What I owned</small><p>{project.ownership}</p></div>
+                {'evidence' in project && project.evidence && <div><small>Evidence</small><p>{project.evidence}</p></div>}
+              </div>
               <div className="challenge"><small>The engineering problem</small><p>{project.challenge}</p></div>
-              <ul>{project.decisions.map((decision) => <li key={decision}>{decision}</li>)}</ul>
+              <div className="decision-block"><small>Key decisions</small><ul>{project.decisions.map((decision) => <li key={decision}>{decision}</li>)}</ul></div>
+              <div className="project-tech">
+                <small>Technology</small>
+                <div className="project-tech-list">{project.tech.map((tech) => <span key={tech}>{tech}</span>)}</div>
+              </div>
               <div className="project-links">
-                <a href={project.github} target="_blank" rel="noreferrer"><Github size={17} /> Source</a>
-                {'live' in project && project.live && <a href={project.live} target="_blank" rel="noreferrer">{('liveLabel' in project && project.liveLabel) || 'Live site'} <ArrowUpRight size={17} /></a>}
+                <a href={project.github} target="_blank" rel="noreferrer"><Github size={17} /> View source <ArrowUpRight size={15} /></a>
+                {'live' in project && project.live && <a href={project.live} target="_blank" rel="noreferrer">{('live' in project && project.liveLabel) || 'Live product'} <ArrowUpRight size={17} /></a>}
               </div>
             </div>
-            <div className="project-visual"><ProjectVisual type={project.visual} /><div className="tech-ribbon">{project.tech.map((tech) => <span key={tech}>{tech}</span>)}</div></div>
+            <div className="project-visual"><ProjectVisual type={project.visual} /></div>
           </motion.article>
         ))}
       </div>

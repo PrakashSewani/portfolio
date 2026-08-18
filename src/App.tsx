@@ -8,17 +8,7 @@ import Experience from './components/Experience';
 import Interests from './components/Interests';
 import Contact from './components/Contact';
 import CommandPalette from './components/CommandPalette';
-
-export const WORKSPACES = [
-  { id: 'home', label: 'Intro', href: '#home' },
-  { id: 'projects', label: 'Work', href: '#projects' },
-  { id: 'expertise', label: 'Expertise', href: '#expertise' },
-  { id: 'journey', label: 'Career', href: '#journey' },
-  { id: 'interests', label: 'About', href: '#interests' },
-  { id: 'contact', label: 'Contact', href: '#contact' },
-] as const;
-
-export type WorkspaceId = (typeof WORKSPACES)[number]['id'];
+import { WORKSPACES, type WorkspaceId } from './data/navigation';
 
 export default function App() {
   const [cmdOpen, setCmdOpen] = useState(false);
@@ -69,7 +59,8 @@ export default function App() {
 
   const navigate = (id: WorkspaceId) => {
     setActiveWorkspace(id);
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+    document.getElementById(id)?.scrollIntoView({ behavior });
   };
 
   return (

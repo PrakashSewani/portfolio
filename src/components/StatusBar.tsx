@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { isMacOs } from 'react-device-detect';
-import { type WorkspaceId } from '../App';
+import { type WorkspaceId } from '../data/navigation';
 
 function LiveClock() {
   const [time, setTime] = useState('');

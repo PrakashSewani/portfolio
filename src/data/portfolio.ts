@@ -9,6 +9,11 @@ export const profile = {
   resume: 'https://prakashsewaniresume.tiiny.site',
   github: 'https://github.com/PrakashSewani',
   linkedin: 'https://www.linkedin.com/in/prakash-s-2a389721a/',
+  summary:
+    'I architect modular frontend platforms, dependable APIs, and real-time systems that stay maintainable as products and teams grow.',
+  availability: 'Open to conversations about senior engineering opportunities',
+  focus: ['Frontend platforms', 'Backend & APIs', 'Real-time systems'],
+  experience: '4+ years in production software',
 };
 
 export const projects = [
@@ -26,6 +31,9 @@ export const projects = [
     live: 'https://class-spy.prakashsewani.com/',
     liveLabel: 'Visit website',
     visual: 'inspector',
+    context: 'Developer tooling',
+    ownership: 'Designed and built the extension experience and parsing flow.',
+    evidence: 'Supports six frontend frameworks in one inspection workflow.',
   },
   {
     index: '02',
@@ -41,6 +49,9 @@ export const projects = [
     live: 'https://episode-roulette.prakashsewani.com/',
     liveLabel: 'Visit website',
     visual: 'roulette',
+    context: 'Browser extension',
+    ownership: 'Built the discovery, probability, and native playback integration.',
+    evidence: 'Works across Chrome and Safari with no external API dependency.',
   },
   {
     index: '03',
@@ -54,6 +65,8 @@ export const projects = [
     tech: ['TypeScript', 'React', 'Node.js', 'MongoDB'],
     github: 'https://github.com/PrakashSewani/Habitual',
     visual: 'habit',
+    context: 'Full-stack product',
+    ownership: 'Shaped the product model, reusable UI, and API-first data flow.',
   },
   {
     index: '04',
@@ -67,6 +80,8 @@ export const projects = [
     tech: ['Python', 'Flask', 'BERT', 'Transformers', 'BeautifulSoup'],
     github: 'https://github.com/PrakashSewani/SMART-EDUCATION-BOT',
     visual: 'knowledge',
+    context: 'Applied NLP project',
+    ownership: 'Built the document extraction, question-answering, and fallback flow.',
   }
 ] as const;
 
@@ -120,19 +135,28 @@ export const career = [
     period: '2025 — PRESENT',
     title: 'Senior Software Engineer',
     place: 'Wonderbiz Technologies',
-    body: 'Architecting scalable microfrontend ecosystems and high-performance systems. Leading development across modular webshells, real-time observability, and NLP-driven automation.',
+    kind: 'Professional experience',
+    highlights: [
+      'Architecting scalable microfrontend ecosystems and high-performance systems.',
+      'Leading development across modular webshells, real-time observability, and NLP-driven automation.',
+    ],
   },
   {
     period: '2022 — 2025',
     title: 'Software Engineer',
     place: 'Wonderbiz Technologies',
-    body: 'Built enterprise product features across frontend and backend systems, worked closely with cross-functional teams, and developed a strong foundation in production software delivery.',
+    kind: 'Professional experience',
+    highlights: [
+      'Built enterprise product features across frontend and backend systems.',
+      'Worked closely with cross-functional teams and developed a strong foundation in production software delivery.',
+    ],
   },
   {
     period: '2018 — 2022',
     title: 'B.E. Computer Science',
     place: 'University of Mumbai',
-    body: 'Studied software engineering, data structures, databases, cloud computing, and systems architecture.',
+    kind: 'Education',
+    highlights: ['Studied software engineering, data structures, databases, cloud computing, and systems architecture.'],
   },
 ] as const;
 

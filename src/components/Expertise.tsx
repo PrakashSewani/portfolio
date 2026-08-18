@@ -6,9 +6,9 @@ export default function Expertise() {
   return (
     <section id="expertise" className="section expertise-section">
       <div className="section-heading compact">
-        <span className="section-index">02 / ENGINEERING RANGE</span>
-        <h2>ARCHITECTURE<br />WITH A REASON.</h2>
-        <p>I choose tools around boundaries, delivery pressure, team ownership, and the behavior the system needs in production.</p>
+        <span className="section-index">02 / TECHNICAL STRENGTHS</span>
+        <h2>WHERE I ADD<br />THE MOST VALUE.</h2>
+        <p>Technical breadth is useful when it maps to ownership: clear boundaries, dependable delivery, and systems people can operate with confidence.</p>
       </div>
 
       <div className="capability-grid">
@@ -30,9 +30,9 @@ export default function Expertise() {
 
       <div className="impact-block">
         <div className="impact-intro">
-          <span>COMMERCIAL WORK / ANONYMIZED</span>
+          <span>PRODUCTION SCOPE / ANONYMIZED</span>
           <h3>Systems built inside real constraints.</h3>
-          <p>Professional work is described at an architecture level to respect client confidentiality without reducing it to a list of technologies.</p>
+          <p>Professional work is described at an architecture level to respect client confidentiality while still showing the kind of problems I take ownership of.</p>
           <ArrowDownRight size={42} />
         </div>
         <div className="impact-list">

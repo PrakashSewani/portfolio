@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { WORKSPACES, type WorkspaceId } from '../App';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
+import { ArrowUpRight, X } from 'lucide-react';
+import { WORKSPACES, type WorkspaceId } from '../data/navigation';
 import { profile } from '../data/portfolio';
 
 interface Command {
@@ -25,21 +26,18 @@ const toast = (message: string) => {
   el.className = 'toast';
   el.textContent = message;
   document.body.appendChild(el);
-  setTimeout(() => el.remove(), 2500);
-};
-
-const getUptimeDays = () => {
-  const start = new Date('2022-07-01');
-  const now = new Date();
-  return Math.floor((now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+  window.setTimeout(() => el.remove(), 2500);
 };
 
 export default function CommandPalette({ isOpen, onClose, onWorkspaceChange }: CommandPaletteProps) {
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
+  const previousFocus = useRef<HTMLElement | null>(null);
   const listboxId = 'cmd-results-list';
+  const shouldReduceMotion = useReducedMotion();
 
   const commands: Command[] = useMemo(() => {
     const nav = WORKSPACES.map((ws) => ({
@@ -48,7 +46,6 @@ export default function CommandPalette({ isOpen, onClose, onWorkspaceChange }: C
       hint: 'workspace',
       action: () => {
         onWorkspaceChange?.(ws.id);
-        document.getElementById(ws.id)?.scrollIntoView({ behavior: 'smooth' });
         onClose();
       },
       section: 'workspaces',
@@ -56,37 +53,39 @@ export default function CommandPalette({ isOpen, onClose, onWorkspaceChange }: C
 
     return [
       ...nav,
-      { id: 'whoami', label: 'whoami', hint: 'identity', action: () => { document.getElementById('home')?.scrollIntoView({ behavior: 'smooth' }); onClose(); toast('prakash_sewani // senior_software_engineer'); }, section: 'shell' },
-      { id: 'uptime', label: 'uptime', hint: 'career days', action: () => { toast(`uptime: ${getUptimeDays()} days`); onClose(); }, section: 'shell' },
-      { id: 'clear', label: 'clear', hint: 'scroll top', action: () => { window.scrollTo({ top: 0, behavior: 'smooth' }); onClose(); }, section: 'shell' },
-      { id: 'github', label: 'open_github', hint: 'external', action: () => window.open(profile.github, '_blank'), section: 'links' },
-      { id: 'linkedin', label: 'linkedin', hint: 'external', action: () => window.open(profile.linkedin, '_blank'), section: 'links' },
-      { id: 'resume', label: 'view_resume', hint: 'external', action: () => window.open(profile.resume, '_blank'), section: 'links' },
+      { id: 'resume', label: 'view_resume', hint: 'external', action: () => { window.open(profile.resume, '_blank'); onClose(); }, section: 'links' },
+      { id: 'linkedin', label: 'open_linkedin', hint: 'external', action: () => { window.open(profile.linkedin, '_blank'); onClose(); }, section: 'links' },
+      { id: 'github', label: 'open_github', hint: 'external', action: () => { window.open(profile.github, '_blank'); onClose(); }, section: 'links' },
       { id: 'email', label: 'copy_email', hint: 'clipboard', action: async () => { try { await navigator.clipboard.writeText(profile.email); toast(`copied: ${profile.email}`); } catch { toast('copy failed'); } onClose(); }, section: 'actions' },
     ];
   }, [onClose, onWorkspaceChange]);
 
-  const filtered = commands.filter((cmd) =>
-    cmd.label.toLowerCase().includes(query.toLowerCase())
-  );
+  const filtered = commands.filter((cmd) => cmd.label.toLowerCase().includes(query.toLowerCase()));
 
   useEffect(() => {
     setActiveIndex(0);
   }, [query]);
 
   useEffect(() => {
-    if (isOpen) {
-      setQuery('');
-      setActiveIndex(0);
-      setTimeout(() => inputRef.current?.focus(), 50);
-    }
+    if (!isOpen) return;
+    previousFocus.current = document.activeElement as HTMLElement;
+    setQuery('');
+    setActiveIndex(0);
+    const focusTimer = window.setTimeout(() => inputRef.current?.focus(), 50);
+    return () => window.clearTimeout(focusTimer);
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (isOpen) return;
+    previousFocus.current?.focus();
+    previousFocus.current = null;
   }, [isOpen]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (e.key === 'ArrowDown') {
         e.preventDefault();
-        setActiveIndex((prev) => Math.min(prev + 1, filtered.length - 1));
+        setActiveIndex((prev) => Math.min(prev + 1, Math.max(filtered.length - 1, 0)));
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
         setActiveIndex((prev) => Math.max(prev - 1, 0));
@@ -100,49 +99,60 @@ export default function CommandPalette({ isOpen, onClose, onWorkspaceChange }: C
     [filtered, activeIndex, onClose]
   );
 
-  // Global keyboard listener
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
-        if (isOpen) {
-          onClose();
-        } else {
-          // Dispatch a custom event that App listens to
-          window.dispatchEvent(new CustomEvent('toggle-cmd-palette'));
-        }
+        if (isOpen) onClose();
+        else window.dispatchEvent(new CustomEvent('toggle-cmd-palette'));
       }
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
   }, [isOpen, onClose]);
 
-  // Scroll active result into view
   useEffect(() => {
     const active = resultsRef.current?.children[activeIndex] as HTMLElement;
     active?.scrollIntoView({ block: 'nearest' });
   }, [activeIndex]);
 
+  const handleModalKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== 'Tab') return;
+    const items = modalRef.current?.querySelectorAll<HTMLElement>('input, button, [role="option"]');
+    if (!items?.length) return;
+    const first = items[0];
+    const last = items[items.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          initial={{ opacity: 0 }}
+          initial={shouldReduceMotion ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.1 }}
+          exit={shouldReduceMotion ? undefined : { opacity: 0 }}
+          transition={{ duration: shouldReduceMotion ? 0 : 0.1 }}
           className="cmd-backdrop"
           onClick={(e) => e.target === e.currentTarget && onClose()}
           role="dialog"
           aria-modal="true"
-          aria-label="Command palette"
+          aria-label="Portfolio navigation"
         >
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
+            ref={modalRef}
+            initial={shouldReduceMotion ? false : { opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.15 }}
+            exit={shouldReduceMotion ? undefined : { opacity: 0, y: -10 }}
+            transition={{ duration: shouldReduceMotion ? 0 : 0.15 }}
             className="cmd-modal"
+            onKeyDown={handleModalKeyDown}
           >
             <div className="cmd-input-wrapper">
               <span className="cmd-prompt">PS /</span>
@@ -162,19 +172,12 @@ export default function CommandPalette({ isOpen, onClose, onWorkspaceChange }: C
                 aria-activedescendant={filtered[activeIndex] ? `cmd-item-${filtered[activeIndex].id}` : undefined}
                 aria-expanded={filtered.length > 0}
               />
+              <button type="button" className="cmd-close" onClick={onClose} aria-label="Close portfolio navigation"><X size={18} /></button>
             </div>
 
-            <div
-              id={listboxId}
-              className="cmd-results"
-              ref={resultsRef}
-              role="listbox"
-              aria-label="Command results"
-            >
+            <div id={listboxId} className="cmd-results" ref={resultsRef} role="listbox" aria-label="Portfolio navigation results">
               {filtered.length === 0 ? (
-                <div className="p-6 text-center text-ink-subtle text-xs uppercase tracking-widest">
-                  no results
-                </div>
+                <div className="cmd-empty">No matching destination</div>
               ) : (
                 filtered.map((cmd, i) => (
                   <div
@@ -198,6 +201,7 @@ export default function CommandPalette({ isOpen, onClose, onWorkspaceChange }: C
               <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
               <span><kbd>↵</kbd> select</span>
               <span><kbd>esc</kbd> close</span>
+              <ArrowUpRight size={13} aria-hidden="true" />
             </div>
           </motion.div>
         </motion.div>

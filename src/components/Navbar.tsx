@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
+import { useEffect, useRef, useState } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { ArrowUpRight, Command, Menu, X } from 'lucide-react';
-import { WORKSPACES, type WorkspaceId } from '../App';
+import { WORKSPACES, type WorkspaceId } from '../data/navigation';
 import { profile } from '../data/portfolio';
 
 interface NavbarProps {
@@ -12,12 +12,38 @@ interface NavbarProps {
 
 export default function Navbar({ onOpenCmd, activeWorkspace, onWorkspaceChange }: NavbarProps) {
   const [open, setOpen] = useState(false);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLElement>(null);
+  const previousOverflow = useRef('');
+  const wasOpen = useRef(false);
+  const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
-    document.body.style.overflow = open ? 'hidden' : '';
+    if (open) {
+      previousOverflow.current = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      wasOpen.current = true;
+      window.setTimeout(() => menuRef.current?.querySelector<HTMLButtonElement>('button')?.focus(), 0);
+    } else {
+      document.body.style.overflow = previousOverflow.current;
+      if (wasOpen.current) {
+        menuButtonRef.current?.focus();
+        wasOpen.current = false;
+      }
+    }
+
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = previousOverflow.current;
     };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOpen(false);
+    };
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
   }, [open]);
 
   const goTo = (id: WorkspaceId) => {
@@ -25,9 +51,24 @@ export default function Navbar({ onOpenCmd, activeWorkspace, onWorkspaceChange }
     onWorkspaceChange(id);
   };
 
+  const handleMenuKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
+    if (event.key !== 'Tab') return;
+    const items = menuRef.current?.querySelectorAll<HTMLElement>('button, a');
+    if (!items?.length) return;
+    const first = items[0];
+    const last = items[items.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  };
+
   return (
     <header className="site-header">
-      <button className="wordmark" onClick={() => goTo('home')} aria-label="Go to introduction">
+      <button className="wordmark" onClick={() => goTo('home')} aria-label="Go to home">
         <span>PS</span>
         <strong>Prakash Sewani</strong>
         <small>Senior Engineer</small>
@@ -53,6 +94,7 @@ export default function Navbar({ onOpenCmd, activeWorkspace, onWorkspaceChange }
           Résumé <ArrowUpRight size={15} />
         </a>
         <button
+          ref={menuButtonRef}
           type="button"
           className="menu-button"
           onClick={() => setOpen((value) => !value)}
@@ -67,12 +109,14 @@ export default function Navbar({ onOpenCmd, activeWorkspace, onWorkspaceChange }
       <AnimatePresence>
         {open && (
           <motion.nav
+            ref={menuRef}
             id="mobile-navigation"
             className="mobile-nav"
-            initial={{ clipPath: 'inset(0 0 100% 0)' }}
+            initial={shouldReduceMotion ? false : { clipPath: 'inset(0 0 100% 0)' }}
             animate={{ clipPath: 'inset(0 0 0% 0)' }}
-            exit={{ clipPath: 'inset(0 0 100% 0)' }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            exit={shouldReduceMotion ? undefined : { clipPath: 'inset(0 0 100% 0)' }}
+            transition={{ duration: shouldReduceMotion ? 0 : 0.35, ease: [0.22, 1, 0.36, 1] }}
+            onKeyDown={handleMenuKeyDown}
           >
             {WORKSPACES.map((item, index) => (
               <button key={item.id} onClick={() => goTo(item.id)}>

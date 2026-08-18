@@ -10,7 +10,7 @@ export default function Interests() {
   return (
     <section id="interests" className="section about-section">
       <div className="about-lead">
-        <span className="section-index">04 / ABOUT</span>
+        <span className="section-index">04 / APPROACH</span>
         <h2>PRAGMATIC.<br /><em>CURIOUS.</em><br />HARD TO RATTLE.</h2>
       </div>
       <div className="about-copy">
@@ -23,9 +23,9 @@ export default function Interests() {
       </div>
 
       <div className="offscreen-strip">
-        <div><Crosshair /><span>TACTICAL GAMES</span><strong>Strategy under pressure</strong></div>
-        <div><Swords /><span>SOULS-LIKES</span><strong>Patience and mastery</strong></div>
-        <div><Gauge /><span>LONG DRIVES</span><strong>Space to reset</strong></div>
+        <div><Crosshair /><span>WORKING STYLE</span><strong>Strategy under pressure</strong></div>
+        <div><Swords /><span>ENGINEERING JUDGMENT</span><strong>Patience and mastery</strong></div>
+        <div><Gauge /><span>RESET & REFLECT</span><strong>Space to reset</strong></div>
       </div>
     </section>
   );
